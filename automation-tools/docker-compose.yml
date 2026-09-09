@@ -1,0 +1,32 @@
+services:
+  api:
+    build: ./api
+    ports:
+      - "3002:3002"
+    environment:
+      PORT: 3002
+      DB_PATH: /data/notifications.db
+    volumes:
+      - app_data:/data
+
+  bot:
+    build: ./bot
+    environment:
+      BOT_TOKEN: ${BOT_TOKEN:-your-telegram-bot-token}
+      API_URL: http://api:3002
+      ADMIN_IDS: ${ADMIN_IDS:-123456789}
+      DB_PATH: /data/notifications.db
+    volumes:
+      - app_data:/data
+    depends_on:
+      - api
+
+  dashboard:
+    build: ./dashboard
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  app_data:

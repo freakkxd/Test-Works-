@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Northstar Demo — Automation Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #f8fafc; color: #0f172a; min-height: 100vh; }
+    .northstar-topbar { background: white; border-bottom: 1px solid #e2e8f0; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .northstar-topbar-inner { max-width: 1280px; margin: 0 auto; padding: 0 1rem; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+    .northstar-logo { font-size: 1.25rem; font-weight: 700; color: #4f46e5; letter-spacing: -0.02em; text-decoration: none; }
+    .northstar-nav { display: flex; gap: 1.5rem; align-items: center; font-size: 0.875rem; font-weight: 500; }
+    .northstar-nav a { color: #64748b; text-decoration: none; transition: color 0.15s; }
+    .northstar-nav a:hover { color: #6366f1; }
+    .northstar-nav .active { color: #4f46e5; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 2rem 1rem; }
+    .header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+    h1 { font-size: 1.5rem; font-weight: 700; color: #0f172a; }
+    .subtitle { font-size: 0.75rem; color: #64748b; margin-top: 0.25rem; }
+    .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .btn { padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid transparent; cursor: pointer; font-size: 0.875rem; font-weight: 500; transition: all 0.15s; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary { background: #6366f1; color: white; border-color: #6366f1; }
+    .btn-primary:hover:not(:disabled) { background: #4f46e5; border-color: #4f46e5; }
+    .btn-secondary { background: #f1f5f9; color: #334155; border-color: #e2e8f0; }
+    .btn-secondary:hover:not(:disabled) { background: #e2e8f0; }
+    .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .metric { background: white; border-radius: 12px; padding: 1.25rem; border: 1px solid #e2e8f0; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .metric-value { font-size: 1.75rem; font-weight: 700; margin-top: 0.25rem; color: #0f172a; }
+    .metric-label { font-size: 0.8rem; color: #64748b; font-weight: 500; }
+    .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+    .chart-box { background: white; border-radius: 12px; padding: 1.25rem; border: 1px solid #e2e8f0; box-shadow: 0 1px 2px rgba(0,0,0,0.05); min-height: 280px; }
+    .chart-title { font-size: 0.875rem; color: #64748b; margin-bottom: 1rem; font-weight: 500; }
+    .events { background: white; border-radius: 12px; padding: 1.25rem; border: 1px solid #e2e8f0; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .event-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #f1f5f9; font-size: 0.875rem; gap: 1rem; }
+    .event-left { display: flex; align-items: center; gap: 0.5rem; }
+    .badge { padding: 2px 8px; border-radius: 999px; font-size: 0.7rem; white-space: nowrap; font-weight: 500; }
+    .badge-order { background: #eef2ff; color: #4f46e5; border: 1px solid #e0e7ff; }
+    .badge-student { background: #f0fdf4; color: #16a34a; border: 1px solid #dcfce7; }
+    .badge-payment { background: #fffbeb; color: #d97706; border: 1px solid #fef3c7; }
+    .badge-webhook { background: #faf5ff; color: #9333ea; border: 1px solid #f3e8ff; }
+    .badge-webhook_error { background: #fef2f2; color: #dc2626; border: 1px solid #fee2e2; }
+    .empty-state { text-align: center; padding: 3rem; color: #64748b; }
+    .loading { text-align: center; padding: 2rem; color: #64748b; }
+    .error-state { background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 1.5rem; text-align: center; margin-bottom: 1rem; color: #991b1b; }
+    .footer-note { text-align: center; font-size: 0.75rem; color: #94a3b8; margin-top: 1.5rem; padding: 1.5rem; border-top: 1px solid #e2e8f0; background: white; }
+    .updated { font-size: 0.75rem; color: #64748b; }
+    @media (max-width: 768px) { .charts { grid-template-columns: 1fr; } .northstar-nav { display: none; } }
+  </style>
+</head>
+<body>
+  <header class="northstar-topbar">
+    <div class="northstar-topbar-inner">
+      <a href="/" class="northstar-logo">◆ Northstar Demo</a>
+      <nav class="northstar-nav">
+        <a href="http://localhost:5173">B2B Marketplace</a>
+        <a href="http://localhost:5174">EdTech CRM</a>
+        <a href="http://localhost:8080" class="active">Automation</a>
+      </nav>
+    </div>
+  </header>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>Automation Dashboard</h1>
+        <p class="subtitle">Northstar Demo · Синтетические данные для демонстрации</p>
+        <p class="updated" id="lastUpdated"></p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" id="btnSeed" onclick="seedDemo()">Загрузить демо-данные</button>
+        <button class="btn btn-secondary" id="btnReset" onclick="resetDemo()">Сбросить и перегенерировать</button>
+      </div>
+    </div>
+
+    <div id="errorBox" style="display:none" class="error-state">
+      <p id="errorMsg">Ошибка загрузки данных</p>
+      <button class="btn btn-primary" style="margin-top:0.75rem" onclick="loadAll()">Повторить</button>
+    </div>
+
+    <div id="loadingBox" class="loading">Загрузка данных...</div>
+
+    <div id="content" style="display:none">
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">Заказы (14 дней)</div><div class="metric-value" id="orders">—</div></div>
+        <div class="metric"><div class="metric-label">Новые студенты</div><div class="metric-value" id="students">—</div></div>
+        <div class="metric"><div class="metric-label">Платежи</div><div class="metric-value" id="payments">—</div></div>
+        <div class="metric"><div class="metric-label">Выручка</div><div class="metric-value" id="revenue">—</div></div>
+      </div>
+
+      <div class="charts">
+        <div class="chart-box">
+          <div class="chart-title">Заказы и студенты за 14 дней</div>
+          <canvas id="dailyChart"></canvas>
+        </div>
+        <div class="chart-box">
+          <div class="chart-title">Распределение событий</div>
+          <canvas id="typeChart"></canvas>
+        </div>
+      </div>
+
+      <div class="events">
+        <h2 style="margin-bottom: 1rem; font-size: 1rem;">Последние события</h2>
+        <div id="eventsList"></div>
+      </div>
+    </div>
+
+  </div>
+  <footer class="footer-note">Northstar Demo · Синтетические данные для демонстрации · Все данные искусственные · <a href="http://localhost:5173" style="color:#6366f1">B2B</a> · <a href="http://localhost:5174" style="color:#6366f1">EdTech</a> · <a href="http://localhost:8080" style="color:#6366f1">Automation</a></footer>
+
+  <script>
+    const API = '/api';
+    const fmt = new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 });
+    let dailyChartInst = null, typeChartInst = null;
+
+    const icons = { order: '🛒', student: '🎓', payment: '💰', webhook: '🔗', webhook_error: '⚠️' };
+
+    async function apiFetch(path, opts) {
+      const res = await fetch(API + path, opts);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    }
+
+    function showError(msg) {
+      document.getElementById('errorBox').style.display = 'block';
+      document.getElementById('errorMsg').textContent = msg;
+      document.getElementById('loadingBox').style.display = 'none';
+      document.getElementById('content').style.display = 'none';
+    }
+
+    function showContent() {
+      document.getElementById('errorBox').style.display = 'none';
+      document.getElementById('loadingBox').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
+    }
+
+    async function loadStats() {
+      const stats = await apiFetch('/stats?period=14days');
+      document.getElementById('orders').textContent = stats.orders;
+      document.getElementById('students').textContent = stats.students;
+      document.getElementById('payments').textContent = stats.payments;
+      document.getElementById('revenue').textContent = fmt.format(stats.revenue);
+      return stats;
+    }
+
+    async function loadDailyChart() {
+      const daily = await apiFetch('/stats/daily?days=14');
+      const dates = [...new Set(daily.map(d => d.date))].sort();
+      const orders = dates.map(d => daily.find(x => x.date === d && x.type === 'order')?.count || 0);
+      const students = dates.map(d => daily.find(x => x.date === d && x.type === 'student')?.count || 0);
+
+      if (dailyChartInst) dailyChartInst.destroy();
+      dailyChartInst = new Chart(document.getElementById('dailyChart'), {
+        type: 'bar',
+        data: {
+          labels: dates.map(d => new Date(d).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })),
+          datasets: [
+            { label: 'Заказы', data: orders, backgroundColor: '#3b82f6' },
+            { label: 'Студенты', data: students, backgroundColor: '#22c55e' },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { labels: { color: '#94a3b8' } } },
+          scales: { x: { ticks: { color: '#94a3b8', maxRotation: 45 } }, y: { ticks: { color: '#94a3b8', stepSize: 1 } } },
+        },
+      });
+    }
+
+    async function loadTypeChart(stats) {
+      if (typeChartInst) typeChartInst.destroy();
+      typeChartInst = new Chart(document.getElementById('typeChart'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Заказы', 'Студенты', 'Платежи'],
+          datasets: [{ data: [stats.orders, stats.students, stats.payments], backgroundColor: ['#3b82f6', '#22c55e', '#f59e0b'] }],
+        },
+        options: { responsive: true, plugins: { legend: { labels: { color: '#94a3b8' } } } },
+      });
+    }
+
+    async function loadEvents() {
+      const events = await apiFetch('/events?limit=12');
+      if (!events.length) {
+        document.getElementById('eventsList').innerHTML = '<div class="empty-state"><p>Нет событий</p><button class="btn btn-primary" onclick="seedDemo()">Загрузить демо-данные</button></div>';
+        return;
+      }
+      document.getElementById('eventsList').innerHTML = events.map(e => {
+        const payload = JSON.parse(e.payload || '{}');
+        return `<div class="event-item">
+          <div class="event-left">
+            <span>${icons[e.type] || '📌'}</span>
+            <span class="badge badge-${e.type}">${e.type}</span>
+            <span>${payload.description || ''}</span>
+          </div>
+          <span style="color:#64748b;white-space:nowrap">${new Date(e.created_at).toLocaleString('ru-RU')}</span>
+        </div>`;
+      }).join('');
+    }
+
+    async function loadMeta() {
+      try {
+        const meta = await apiFetch('/demo/meta');
+        if (meta.lastSeed) {
+          document.getElementById('lastUpdated').textContent = 'Обновлено: ' + new Date(meta.lastSeed).toLocaleString('ru-RU');
+        }
+        document.getElementById('btnSeed').style.display = meta.isEmpty ? 'inline-block' : 'none';
+      } catch {}
+    }
+
+    async function loadAll() {
+      document.getElementById('loadingBox').style.display = 'block';
+      document.getElementById('content').style.display = 'none';
+      try {
+        const stats = await loadStats();
+        await loadDailyChart();
+        await loadTypeChart(stats);
+        await loadEvents();
+        await loadMeta();
+        showContent();
+      } catch (err) {
+        showError('Не удалось загрузить данные: ' + err.message);
+      }
+    }
+
+    async function seedDemo() {
+      document.getElementById('btnSeed').disabled = true;
+      try {
+        await apiFetch('/demo/seed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+        await loadAll();
+      } catch (err) { showError(err.message); }
+      document.getElementById('btnSeed').disabled = false;
+    }
+
+    async function resetDemo() {
+      if (!confirm('Сбросить все demo-данные и перегенерировать?')) return;
+      document.getElementById('btnReset').disabled = true;
+      try {
+        await apiFetch('/demo/reset', { method: 'POST' });
+        await loadAll();
+      } catch (err) { showError(err.message); }
+      document.getElementById('btnReset').disabled = false;
+    }
+
+    loadAll();
+    setInterval(loadAll, 60000);
+  </script>
+</body>
+</html>

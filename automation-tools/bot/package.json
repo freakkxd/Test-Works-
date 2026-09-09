@@ -1,0 +1,16 @@
+{
+  "name": "automation-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot for notifications",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "telegraf": "^4.16.0",
+    "better-sqlite3": "^11.0.0",
+    "node-cron": "^3.0.3",
+    "dotenv": "^16.4.0"
+  }
+}
