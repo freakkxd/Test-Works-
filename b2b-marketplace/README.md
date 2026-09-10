@@ -1,6 +1,6 @@
-# B2B Marketplace — Northstar Demo
+# B2B Marketplace — Northstar Demo v2
 
-Fullstack B2B-маркетплейс для портфолио. Демонстрационная версия с синтетическими данными.
+Fullstack B2B-маркетплейс для портфолио. Демонстрационная версия с синтетическими данными. **Единый стиль Northstar Design System v2** (`Inter` `slate-50` `#f8fafc` `primary #6366f1` `northstar-header` `◆ Northstar Demo`).
 
 > **Все данные в демонстрационной версии синтетические и не относятся к реальным пользователям или организациям.**
 

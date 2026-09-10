@@ -1,6 +1,6 @@
-# EdTech CRM — Northstar Demo
+# EdTech CRM — Northstar Demo v2
 
-CRM для учебного центра с ролями, расписанием, оплатами и прогрессом обучения.
+CRM для учебного центра с ролями, расписанием, оплатами и прогрессом обучения. **Единый стиль Northstar Design System v2** (`Inter` `primary #6366f1` `northstar-header` `◆ Northstar Demo`, фикс белого экрана `main.jsx` `ReactDOM.createRoot`).
 
 > **Все данные в демонстрационной версии синтетические и не относятся к реальным пользователям или организациям.**
 

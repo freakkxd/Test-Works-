@@ -1,6 +1,6 @@
-# Automation Tools — Northstar Demo
+# Automation Tools — Northstar Demo v2
 
-Telegram-бот + REST API + Dashboard для автоматизации уведомлений.
+Telegram-бот + REST API + Dashboard для автоматизации уведомлений. **Единый светлый стиль Northstar v2** (`#f8fafc` `northstar-topbar` `◆ Northstar Demo`, было `#0f172a` dark, `better-sqlite3` `node:20-slim` `apt-get python3 make g++` фикс `fcntl64`).
 
 > **Все данные в демонстрационной версии синтетические и не относятся к реальным пользователям или организациям. Метрики сформированы из синтетических демонстрационных событий.**
 
