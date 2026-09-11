@@ -1,5 +1,7 @@
 # B2B Marketplace — Northstar Demo v2
 
+> **Подпись:** последние `425adda` `unified` + `0b3ca4d` `package-lock.json` (фикс `npm ci EUSAGE`); в работе `start-all.sh` (один клик `5173`); цель — `40 товаров` `mock-оплата` стабильно из коробки.
+
 Fullstack B2B-маркетплейс для портфолио. Демонстрационная версия с синтетическими данными. **Единый стиль Northstar Design System v2** (`Inter` `slate-50` `#f8fafc` `primary #6366f1` `northstar-header` `◆ Northstar Demo`).
 
 > **Все данные в демонстрационной версии синтетические и не относятся к реальным пользователям или организациям.**

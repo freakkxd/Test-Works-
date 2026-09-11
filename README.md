@@ -1,5 +1,10 @@
 # Fullstack Portfolio — Northstar Demo Suite v2
 
+> **Подпись — последние коммиты, в работе и цель:**
+> - **Последние:** `425adda` `Northstar v2 unified` (`Inter #6366f1` `slate-50` `northstar-header` `◆`) → `0b3ca4d` `fix: Docker npm ci` (`.gitignore` `package-lock.json` 16001 строк, `EUSAGE` закрыт) → `e5109ea` `feat: start-all.sh/ps1` (94/69 строк, один клик)
+> - **В работе:** `start-all.sh`/`ps1` ASCII fix (`415620b` `ParserError` `вЂ”` → `-`) — уже `origin/master`, `docker compose up --build -d` последовательно (не параллельно `27Gi` RAM), `health` `40/24/47`
+> - **Цель:** три проекта в одном окне `5173/5174/8080` из коробки (`./start-all.sh` / `.\start-all.ps1`), `PORTFOLIO_CHECKLIST` дисклеймер, далее `Test-Works` как демо для портфолио
+
 Три fullstack-проекта в **едином стиле Northstar Design System** (Inter, `slate-50` `#f8fafc`, `primary #6366f1`). **Все данные синтетические.**
 
 > Подробный чеклист: [PORTFOLIO_CHECKLIST.md](./PORTFOLIO_CHECKLIST.md)
