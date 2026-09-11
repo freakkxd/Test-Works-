@@ -20,19 +20,27 @@
 
 ## Быстрый старт (из коробки, один клик)
 
+**Linux / macOS / WSL:**
 ```bash
-# Клонируй
 git clone https://github.com/freakkxd/Test-Works-.git
 cd Test-Works-
-
-# Запусти все 3 (параллельно, каждый ~30 сек сборка)
-cd b2b-marketplace && docker compose up --build -d && cd ..
-cd edtech-crm && docker compose up --build -d && cd ..
-cd automation-tools && docker compose up --build -d
-
-# Открой в одном окне 3 вкладки:
-# http://localhost:5173  http://localhost:5174  http://localhost:8080
+./start-all.sh              # запустит все 3 последовательно, проверит health, откроет 3 вкладки
+# или вручную:
+# cd b2b-marketplace && docker compose up --build -d && cd ..
+# cd edtech-crm && docker compose up --build -d && cd ..
+# cd automation-tools && docker compose up --build -d
 ```
+
+**Windows PowerShell:**
+```powershell
+git clone https://github.com/freakkxd/Test-Works-.git
+cd Test-Works-
+.\start-all.ps1             # то же, для Windows
+# Логи: .\start-all.ps1 -Logs
+# Остановить: .\start-all.ps1 -Down  /  ./start-all.sh --down
+```
+
+Открой в одном окне 3 вкладки: `http://localhost:5173` `http://localhost:5174` `http://localhost:8080`
 
 **Проверка:**
 ```bash
